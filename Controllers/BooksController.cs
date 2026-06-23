@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyBookApi2.DTOs;
 using MyBookApi2.Services;
@@ -5,12 +6,13 @@ using MyBookApi2.Services;
 namespace MyBookApi2.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class BooksController : ControllerBase
 {
     private readonly IBookService _bookService;
 
-    // DI: framework injects the Scoped IBookService — no 'new BookService()' anywhere
+    // DI: framework injects the Scoped IBookService
     public BooksController(IBookService bookService)
     {
         _bookService = bookService;
@@ -37,8 +39,9 @@ public class BooksController : ControllerBase
         return Ok(book);
     }
 
-    // POST api/books 
+    // POST api/books
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] BookCreateDTO dto)
     {
         var created = await _bookService.CreateAsync(dto);
@@ -47,6 +50,7 @@ public class BooksController : ControllerBase
 
     // PUT api/books/3
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, [FromBody] BookUpdateDTO dto)
     {
         var updated = await _bookService.UpdateAsync(id, dto);
@@ -55,8 +59,9 @@ public class BooksController : ControllerBase
         return Ok(updated);
     }
 
-    // DELETE api/books/3 
+    // DELETE api/books/3
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _bookService.DeleteAsync(id);

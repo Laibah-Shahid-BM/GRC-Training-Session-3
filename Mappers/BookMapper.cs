@@ -10,7 +10,6 @@ public static class BookMapper
         return new Book
         {
             Title = dto.Title,
-            Author = dto.Author,
             Price = dto.Price,
             PublishedDate = dto.PublishedDate ?? DateTime.UtcNow
         };
@@ -19,7 +18,6 @@ public static class BookMapper
     public static void ApplyUpdate(BookUpdateDTO dto, Book entity)
     {
         entity.Title = dto.Title;
-        entity.Author = dto.Author;
         entity.Price = dto.Price;
         entity.PublishedDate = dto.PublishedDate ?? entity.PublishedDate;
     }
@@ -30,7 +28,7 @@ public static class BookMapper
         {
             Id = entity.Id,
             Title = entity.Title,
-            Author = entity.Author,
+            Author = entity.Author?.Name ?? string.Empty,
             Price = entity.Price,
             PublishedDate = entity.PublishedDate
         };

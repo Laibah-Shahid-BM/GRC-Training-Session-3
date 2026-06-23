@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using MyBookApi2.Data;
 using MyBookApi2.DTOs;
 using MyBookApi2.Mappers;
 using MyBookApi2.Models;
@@ -6,66 +8,85 @@ namespace MyBookApi2.Services;
 
 public class BookService : IBookService
 {
-    // In-memory store
-    private static readonly List<Book> _books = new()
+    private readonly AppDbContext _context;
+
+    public BookService(AppDbContext context)
     {
-        new Book { Id = 1, Title = "Clean Code", Author = "Robert C. Martin", Price = 34.99m, PublishedDate = new DateTime(2008, 8, 1) },
-        new Book { Id = 2, Title = "The Pragmatic Programmer", Author = "Andrew Hunt", Price = 49.99m, PublishedDate = new DateTime(1999, 10, 20) },
-        new Book { Id = 3, Title = "Refactoring", Author = "Martin Fowler", Price = 44.99m, PublishedDate = new DateTime(2018, 11, 20) }
-    };
+        _context = context;
+    }
 
-    private static int _nextId = 4;
-
-    public Task<IEnumerable<BookResponseDTO>> GetAllAsync(string? author, int page, int pageSize)
+    public async Task<IEnumerable<BookResponseDTO>> GetAllAsync(string? author, int page, int pageSize)
     {
-        IEnumerable<Book> query = _books;
+        var query = _context.Books
+            .AsNoTracking()
+            .Include(b => b.Author)
+            .AsQueryable();
 
-        // Filter: case-insensitive partial match on author
         if (!string.IsNullOrWhiteSpace(author))
         {
             query = query.Where(b =>
-                b.Author.Contains(author, StringComparison.OrdinalIgnoreCase));
+                b.Author.Name.Contains(author));
         }
 
-        // Paginate: Skip/Take
-        var results = query
+        var results = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(BookMapper.ToResponse);
+            .Select(b => BookMapper.ToResponse(b))
+            .ToListAsync();
 
-        return Task.FromResult(results);
+        return results;
     }
 
-    public Task<BookResponseDTO?> GetByIdAsync(int id)
+    public async Task<BookResponseDTO?> GetByIdAsync(int id)
     {
-        var book = _books.FirstOrDefault(b => b.Id == id);
-        return Task.FromResult(book is null ? null : BookMapper.ToResponse(book));
+        var book = await _context.Books
+            .AsNoTracking()
+            .Include(b => b.Author)
+            .FirstOrDefaultAsync(b => b.Id == id);
+
+        return book is null ? null : BookMapper.ToResponse(book);
     }
 
-    public Task<BookResponseDTO> CreateAsync(BookCreateDTO dto)
+    public async Task<BookResponseDTO> CreateAsync(BookCreateDTO dto)
     {
+        var author = await _context.Authors.FirstOrDefaultAsync(a => a.Name == dto.Author)
+                     ?? new Author { Name = dto.Author, Bio = string.Empty };
+
         var entity = BookMapper.ToEntity(dto);
-        entity.Id = _nextId++;
-        _books.Add(entity);
+        entity.Author = author;
 
-        return Task.FromResult(BookMapper.ToResponse(entity));
+        _context.Books.Add(entity);
+        await _context.SaveChangesAsync();
+
+        await _context.Entry(entity).Reference(b => b.Author).LoadAsync();
+        return BookMapper.ToResponse(entity);
     }
 
-    public Task<BookResponseDTO?> UpdateAsync(int id, BookUpdateDTO dto)
+    public async Task<BookResponseDTO?> UpdateAsync(int id, BookUpdateDTO dto)
     {
-        var existing = _books.FirstOrDefault(b => b.Id == id);
-        if (existing is null) return Task.FromResult<BookResponseDTO?>(null);
+        var existing = await _context.Books
+            .Include(b => b.Author)
+            .FirstOrDefaultAsync(b => b.Id == id);
+
+        if (existing is null) return null;
+
+        var author = await _context.Authors.FirstOrDefaultAsync(a => a.Name == dto.Author)
+                     ?? new Author { Name = dto.Author, Bio = string.Empty };
 
         BookMapper.ApplyUpdate(dto, existing);
-        return Task.FromResult<BookResponseDTO?>(BookMapper.ToResponse(existing));
+        existing.Author = author;
+
+        await _context.SaveChangesAsync();
+        return BookMapper.ToResponse(existing);
     }
 
-    public Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var existing = _books.FirstOrDefault(b => b.Id == id);
-        if (existing is null) return Task.FromResult(false);
+        var existing = await _context.Books.FindAsync(id);
+        if (existing is null) return false;
 
-        _books.Remove(existing);
-        return Task.FromResult(true);
+        _context.Books.Remove(existing);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }
