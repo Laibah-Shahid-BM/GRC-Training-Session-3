@@ -5,7 +5,6 @@ namespace MyBookApi2.Mappers;
 
 public static class BookMapper
 {
-    // POST: DTO → new Entity (Id left at 0 for the in-memory store to assign)
     public static Book ToEntity(BookCreateDTO dto)
     {
         return new Book
@@ -17,7 +16,6 @@ public static class BookMapper
         };
     }
 
-    // PUT: mutate existing entity with update DTO (preserves Id)
     public static void ApplyUpdate(BookUpdateDTO dto, Book entity)
     {
         entity.Title = dto.Title;
@@ -26,7 +24,6 @@ public static class BookMapper
         entity.PublishedDate = dto.PublishedDate ?? entity.PublishedDate;
     }
 
-    // GET: Entity → response DTO (no secrets or internal fields leak out)
     public static BookResponseDTO ToResponse(Book entity)
     {
         return new BookResponseDTO

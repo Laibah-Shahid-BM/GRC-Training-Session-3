@@ -32,3 +32,4 @@ E:\benchmatrix\Training Task\MyBookApi2\obj\Debug\net8.0\refint\MyBookApi2.dll
 E:\benchmatrix\Training Task\MyBookApi2\obj\Debug\net8.0\MyBookApi2.pdb
 E:\benchmatrix\Training Task\MyBookApi2\obj\Debug\net8.0\MyBookApi2.genruntimeconfig.cache
 E:\benchmatrix\Training Task\MyBookApi2\obj\Debug\net8.0\ref\MyBookApi2.dll
+E:\benchmatrix\Training Task\MyBookApi2\obj\Debug\net8.0\MyBookApi2.sourcelink.json

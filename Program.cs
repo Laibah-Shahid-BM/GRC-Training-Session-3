@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // --- Service registration ---
 builder.Services.AddControllers();
-builder.Services.AddProblemDetails();     // wraps 4xx/5xx in RFC 9457 ProblemDetails JSON
+builder.Services.AddProblemDetails();     
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -21,7 +21,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStatusCodePages();   // ensures NotFound() → ProblemDetails JSON body
+app.UseStatusCodePages();   
 app.MapControllers();
 
 app.Run();

@@ -32,17 +32,15 @@ public class BooksController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var book = await _bookService.GetByIdAsync(id);
-        if (book is null) return NotFound();  // auto ProblemDetails in .NET 8
+        if (book is null) return NotFound(); 
 
         return Ok(book);
     }
 
-    // POST api/books  → 201 Created + Location header
+    // POST api/books 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] BookCreateDTO dto)
     {
-        // [ApiController] triggers automatic 400 if ModelState is invalid,
-        // so if we reach this line, dto already passed all DataAnnotations.
         var created = await _bookService.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
@@ -57,7 +55,7 @@ public class BooksController : ControllerBase
         return Ok(updated);
     }
 
-    // DELETE api/books/3  → 204 No Content
+    // DELETE api/books/3 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
