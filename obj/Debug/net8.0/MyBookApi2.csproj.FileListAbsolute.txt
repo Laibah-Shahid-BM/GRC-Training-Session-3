@@ -119,3 +119,11 @@ E:\benchmatrix\Training Task\MyBookApi2\bin\Debug\net8.0\ru\Microsoft.CodeAnalys
 E:\benchmatrix\Training Task\MyBookApi2\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 E:\benchmatrix\Training Task\MyBookApi2\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 E:\benchmatrix\Training Task\MyBookApi2\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\LAPTOP WORLD\AppData\Local\Temp\claude\e--benchmatrix-Training-Task-MyBookApi2\c36d764b-8bae-4f4c-964c-b18fbe65a6c9\scratchpad\build_check\appsettings.Development.json
+C:\Users\LAPTOP WORLD\AppData\Local\Temp\claude\e--benchmatrix-Training-Task-MyBookApi2\c36d764b-8bae-4f4c-964c-b18fbe65a6c9\scratchpad\build_check\appsettings.json
+C:\Users\LAPTOP WORLD\AppData\Local\Temp\claude\e--benchmatrix-Training-Task-MyBookApi2\c36d764b-8bae-4f4c-964c-b18fbe65a6c9\scratchpad\build_check\MyBookApi2.staticwebassets.endpoints.json
+C:\Users\LAPTOP WORLD\AppData\Local\Temp\claude\e--benchmatrix-Training-Task-MyBookApi2\c36d764b-8bae-4f4c-964c-b18fbe65a6c9\scratchpad\build_check\MyBookApi2.exe
+C:\Users\LAPTOP WORLD\AppData\Local\Temp\claude\e--benchmatrix-Training-Task-MyBookApi2\c36d764b-8bae-4f4c-964c-b18fbe65a6c9\scratchpad\build_check\MyBookApi2.deps.json
+C:\Users\LAPTOP WORLD\AppData\Local\Temp\claude\e--benchmatrix-Training-Task-MyBookApi2\c36d764b-8bae-4f4c-964c-b18fbe65a6c9\scratchpad\build_check\MyBookApi2.runtimeconfig.json
+C:\Users\LAPTOP WORLD\AppData\Local\Temp\claude\e--benchmatrix-Training-Task-MyBookApi2\c36d764b-8bae-4f4c-964c-b18fbe65a6c9\scratchpad\build_check\MyBookApi2.dll
+C:\Users\LAPTOP WORLD\AppData\Local\Temp\claude\e--benchmatrix-Training-Task-MyBookApi2\c36d764b-8bae-4f4c-964c-b18fbe65a6c9\scratchpad\build_check\MyBookApi2.pdb

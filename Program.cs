@@ -8,12 +8,10 @@ using MyBookApi2.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- Database ---
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 0))));
 
-// --- JWT Authentication ---
 var jwtKey    = builder.Configuration["Jwt:Key"]!;
 var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
 var jwtAud    = builder.Configuration["Jwt:Audience"]!;
@@ -35,12 +33,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// --- Service registration ---
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 
-// Swagger with JWT support
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyBookApi2", Version = "v1" });
@@ -63,10 +59,10 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
-// --- Middleware pipeline ---
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

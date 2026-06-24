@@ -1,9 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using MyBookApi2.Services;
 
 namespace MyBookApi2.Controllers;
 
@@ -11,37 +9,26 @@ namespace MyBookApi2.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private static readonly Dictionary<string, (string Password, string Role)> _users = new()
-    {
-        { "admin", ("admin123", "Admin") },
-        { "user",  ("user123",  "User")  }
-    };
+    private readonly IAuthService _authService;
 
-    private readonly IConfiguration _config;
-
-    public AuthController(IConfiguration config)
+    public AuthController(IAuthService authService)
     {
-        _config = config;
+        _authService = authService;
     }
 
     public record LoginRequest(string Username, string Password);
 
-    // POST api/auth/login
     [HttpPost("login")]
     [AllowAnonymous]
     public IActionResult Login([FromBody] LoginRequest request)
     {
-        if (!_users.TryGetValue(request.Username, out var userData) ||
-            userData.Password != request.Password)
-        {
+        if (!_authService.ValidateCredentials(request.Username, request.Password, out var role))
             return Unauthorized(new { message = "Invalid username or password." });
-        }
 
-        var token = GenerateToken(request.Username, userData.Role);
+        var token = _authService.GenerateToken(request.Username, role);
         return Ok(new { token });
     }
 
-    // GET api/auth/me
     [HttpGet("me")]
     [Authorize]
     public IActionResult Me()
@@ -53,28 +40,5 @@ public class AuthController : ControllerBase
             role     = User.FindFirstValue(ClaimTypes.Role),
             claims
         });
-    }
-
-    private string GenerateToken(string username, string role)
-    {
-        var key         = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.Name,  username),
-            new Claim(ClaimTypes.Role,  role),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-        var token = new JwtSecurityToken(
-            issuer:    _config["Jwt:Issuer"],
-            audience:  _config["Jwt:Audience"],
-            claims:    claims,
-            expires:   DateTime.UtcNow.AddHours(2),
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

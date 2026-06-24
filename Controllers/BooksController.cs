@@ -12,13 +12,11 @@ public class BooksController : ControllerBase
 {
     private readonly IBookService _bookService;
 
-    // DI: framework injects the Scoped IBookService
     public BooksController(IBookService bookService)
     {
         _bookService = bookService;
     }
 
-    // GET api/books?author=martin&page=1&pageSize=10
     [HttpGet]
     public async Task<IActionResult> GetAll(
         [FromQuery] string? author,
@@ -29,7 +27,6 @@ public class BooksController : ControllerBase
         return Ok(books);
     }
 
-    // GET api/books/3
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -39,7 +36,6 @@ public class BooksController : ControllerBase
         return Ok(book);
     }
 
-    // POST api/books
     [HttpPost]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] BookCreateDTO dto)
@@ -48,7 +44,6 @@ public class BooksController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
-    // PUT api/books/3
     [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, [FromBody] BookUpdateDTO dto)
@@ -59,7 +54,6 @@ public class BooksController : ControllerBase
         return Ok(updated);
     }
 
-    // DELETE api/books/3
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
